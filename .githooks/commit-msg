@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# .githooks/commit-msg - tu choi commit khong dung quy uoc
+pattern="^(feat|fix|docs|refactor|test|chore|perf)(\([a-z0-9-]+\))?: .{10,}$"
+if ! grep -qE "$pattern" "$1"; then
+  echo "Thong diep commit khong dung quy uoc Conventional Commits." >&2
+  echo "Vi du: feat(booking): them co che giu cho co thoi han" >&2
+  exit 1
+fi
+
