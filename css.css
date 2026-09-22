@@ -1,0 +1,47 @@
+/* V4 - CSS DESIGN TOKENS */
+
+:root {
+    /* Màu sắc */
+    --color-primary: #2F6B3B;
+    --color-primary-dark: #24542E;
+    --color-primary-light: #EAF3EC;
+    --color-accent: #D99B35;
+
+    --color-text: #1F2933;
+    --color-text-muted: #667085;
+    --color-background: #FFFFFF;
+    --color-surface: #F7F8F6;
+    --color-border: #DFE4DF;
+
+    /* Typography */
+    --font-family: Arial, sans-serif;
+    --font-size-small: 14px;
+    --font-size-medium: 16px;
+    --font-size-large: 20px;
+    --font-size-title: 28px;
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    /* Khoảng cách */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+
+    /* Bo góc */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    /* Đổ bóng */
+    --shadow-sm: 0 2px 8px rgba(31, 41, 51, 0.06);
+    --shadow-md: 0 4px 14px rgba(31, 41, 51, 0.08);
+
+    /* Layout */
+    --container-width: 1180px;
+}
