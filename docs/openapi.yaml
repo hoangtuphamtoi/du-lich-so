@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: API Du lich so CSE703073
+  version: 1.0.0
+paths:
+  /api/v1/products:
+    get:
+      summary: Danh sach san pham co phan trang va bo loc
+      parameters:
+        - name: province
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [tour, stay, ticket]
+        - name: price_min
+          in: query
+          schema:
+            type: number
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Thanh cong
+        "422":
+          description: Tham so khong hop le
