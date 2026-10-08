@@ -3,22 +3,42 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * Get the attributes that should be cast.
+     * Chỉ định cột mật khẩu tùy chỉnh cho Laravel Authentication
+     */
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
+    /**
+     * Các trường được phép gán dữ liệu hàng loạt (Mass Assignment)
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password_hash',
+        'role', // <-- Đã thêm cột role
+    ];
+
+    /**
+     * Các trường sẽ ẩn đi khi xuất dữ liệu ra JSON/API
+     */
+    protected $hidden = [
+        'password_hash',
+        'remember_token',
+    ];
+
+    /**
+     * Ép kiểu dữ liệu
      *
      * @return array<string, string>
      */
@@ -26,7 +46,6 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
     }
 }

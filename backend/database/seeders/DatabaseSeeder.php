@@ -9,12 +9,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Tạo tài khoản Admin (Nếu chưa có thì tạo mới, có rồi thì bỏ qua)
+        // Tạo tài khoản Admin
         User::firstOrCreate(
             ['email' => 'admin@dulichso.com'],
             [
                 'name' => 'Admin User',
-                'password' => bcrypt('password123'),
+                'password' => 'password123', // Truyền chuỗi thường, Laravel 11 sẽ tự băm mật khẩu
             ]
         );
 
@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'customer@dulichso.com'],
             [
                 'name' => 'Customer User',
-                'password' => bcrypt('password123'),
+                'password' => 'password123',
             ]
         );
     }
