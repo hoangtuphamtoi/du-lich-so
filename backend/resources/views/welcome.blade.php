@@ -138,24 +138,33 @@
 </section>
 
 <section class="s28">
-<div class="s39">
-<div class="s40"><span class="s30">ĐƯỢC YÊU THÍCH</span><h2 class="s31">Sản phẩm nổi bật</h2></div>
-<a class="s41" href="#">Xem tất cả <span>→</span></a>
-</div>
-<div class="grid4 s32">
-<div class="card"><div class="ph s42"><span class="badge">Đã xác minh</span><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#B87618" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></div>
-<div class="s43"><b class="s44">Mật ong hoa nhãn</b><span class="s45">180.000đ</span><span class="s46"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5A6A60" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6-7-12a7 7 0 0114 0c0 6-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Sơn La</span></div>
-<a href="#" class="btn">Xem chi tiết</a></div>
-<div class="card"><div class="ph s47"><span class="badge">Đã xác minh</span><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#1E4D3B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></div>
-<div class="s43"><b class="s44">Chè Shan tuyết</b><span class="s45">250.000đ</span><span class="s46"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5A6A60" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6-7-12a7 7 0 0114 0c0 6-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Hà Giang</span></div>
-<a href="#" class="btn">Xem chi tiết</a></div>
-<div class="card"><div class="ph s48"><span class="badge">Đã xác minh</span><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#9A3B52" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></div>
-<div class="s43"><b class="s44">Trà sen Tây Hồ</b><span class="s45">220.000đ</span><span class="s46"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5A6A60" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6-7-12a7 7 0 0114 0c0 6-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Hà Nội</span></div>
-<a href="#" class="btn">Xem chi tiết</a></div>
-<div class="card"><div class="ph s49"><span class="badge">Đã xác minh</span><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#6B4A33" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></div>
-<div class="s43"><b class="s44">Tượng gỗ truyền thống</b><span class="s45">450.000đ</span><span class="s46"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5A6A60" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6-7-12a7 7 0 0114 0c0 6-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Huế</span></div>
-<a href="#" class="btn">Xem chi tiết</a></div>
-</div>
+    <div class="s39">
+        <div class="s40"><span class="s30">ĐƯỢC YÊU THÍCH</span><h2 class="s31">Sản phẩm nổi bật</h2></div>
+        <a class="s41" href="{{ route('categories.index') }}">Xem tất cả <span>→</span></a>
+    </div>
+    <div class="grid4 s32">
+        @forelse($featuredProducts as $product)
+            <div class="card">
+                <div class="ph s42">
+                    <span class="badge">Đã xác minh</span>
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+                <div class="s43">
+                    <b class="s44">{{ $product->title }}</b>
+                    <span class="s45">{{ number_format($product->discount_price ?? $product->base_price) }}đ</span>
+                    <span class="s46">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                        {{ $product->location ?? 'Việt Nam' }}
+                    </span>
+                </div>
+                <a href="{{ route('products.show', $product->id) }}" class="btn">Xem chi tiết</a>
+            </div>
+        @empty
+            <div style="grid-column: 1 / -1; text-align: center; color: #888; padding: 20px 0;">
+                Chưa có sản phẩm nổi bật nào được chọn trong trang quản trị.
+            </div>
+        @endforelse
+    </div>
 </section>
 
 <section class="s28">

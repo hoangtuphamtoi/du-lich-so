@@ -9,12 +9,16 @@ class Product extends Model
 {
     protected $fillable = [
         'supplier_id', 'category_id', 'title', 'slug',
-        'type', 'base_price', 'duration_days', 'capacity', 'cancel_policy', 'status'
+        'type', 'base_price', 'duration_days', 'capacity', 'cancel_policy', 'status',
+        'is_featured', 'is_discount', 'discount_price' // <- Đã thêm các trường nổi bật & giảm giá
     ];
 
     protected $casts = [
         'base_price' => 'decimal:2',
-        'duration_days' => 'integer'
+        'discount_price' => 'decimal:2', // <- Thêm ép kiểu cho giá giảm
+        'duration_days' => 'integer',
+        'is_featured' => 'boolean',      // <- Thêm ép kiểu boolean
+        'is_discount' => 'boolean',      // <- Thêm ép kiểu boolean
     ];
 
     // --- Các quan hệ Eloquent (Relationships) ---

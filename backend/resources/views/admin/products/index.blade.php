@@ -1,0 +1,88 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Quản lý Sản phẩm / Tour') }}
+            </h2>
+            <a href="{{ route('admin.products.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition">
+                + Thêm mới
+            </a>
+        </div>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Thông báo thành công -->
+            @if(session('success'))
+                <div class="p-4 bg-emerald-100 border border-emerald-400 text-emerald-800 rounded-xl text-sm font-medium">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- Bộ lọc sản phẩm -->
+            <div class="flex space-x-2">
+                <a href="{{ route('admin.products.index') }}" class="px-4 py-2 text-xs font-semibold rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm">Tất cả</a>
+                <a href="{{ route('admin.products.index', ['filter' => 'featured']) }}" class="px-4 py-2 text-xs font-semibold rounded-lg bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 shadow-sm">⭐ Nổi bật</a>
+                <a href="{{ route('admin.products.index', ['filter' => 'discount']) }}" class="px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 shadow-sm">🏷️ Giảm giá</a>
+            </div>
+
+            <!-- Bảng danh sách sản phẩm -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
+                <div class="p-6">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Tên sản phẩm</th>
+                                <th class="px-4 py-3">Giá gốc</th>
+                                <th class="px-4 py-3">Giá giảm</th>
+                                <th class="px-4 py-3">Nổi bật</th>
+                                <th class="px-4 py-3 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
+                            @forelse($products as $product)
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">{{ $product->id }}</td>
+                                    <td class="px-4 py-3 font-medium text-gray-900">{{ $product->title }}</td>
+                                    <td class="px-4 py-3">{{ number_format($product->base_price) }}đ</td>
+                                    <td class="px-4 py-3">
+                                        @if($product->is_discount && $product->discount_price)
+                                            <span class="text-emerald-600 font-bold">{{ number_format($product->discount_price) }}đ</span>
+                                        @else
+                                            <span class="text-gray-400">Không giảm</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <form action="{{ route('admin.products.toggleFeatured', $product->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="px-2.5 py-1 rounded-full text-xs font-semibold transition {{ $product->is_featured ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                                                {{ $product->is_featured ? '★ Nổi bật' : '☆ Đặt nổi bật' }}
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-rose-600 hover:text-rose-800 font-semibold text-xs bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition">
+                                                Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-4 py-8 text-center text-gray-400">Chưa có sản phẩm nào trong hệ thống.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</x-app-layout>

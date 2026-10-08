@@ -2,134 +2,212 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreBookingRequest;
+use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Booking;
-use App\Services\BookingService;
-use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
-use RuntimeException;
+use Illuminate\Support\Facades\Schema;
 
 class BookingController extends Controller
 {
     /**
-     * Trình diễn trang thông tin sản phẩm / đặt chỗ
+     * Hiển thị trang chi tiết sản phẩm quà lưu niệm và form đặt mua
      */
     public function showProduct($id)
     {
-        // 1. Lấy dữ liệu tồn kho từ bảng availabilities
-        $availability = DB::table('availabilities')->where('product_id', $id)->first();
-
-        // 2. Giả lập đối tượng $product để trang show.blade.php đọc không bị lỗi Property/Variable
-        $product = (object) [
-            'id' => $id,
-            'title' => 'Sản phẩm kiểm thử #' . $id,
-            'cancel_policy' => 'Chính sách hoàn hủy vé áp dụng cho chương trình chạy thử nghiệm.',
-            'destinations' => collect(),
-            'itineraries' => collect(),
-        ];
-
-        // 3. Chuẩn bị các tập dữ liệu bổ sung
-        $availabilities = collect([$availability]);
-        $related = collect();
-
-        // 4. Trả về View nếu tồn tại
-        if (view()->exists('products.show')) {
-            return view('products.show', compact(
-                'id',
-                'availability',
-                'product',
-                'availabilities',
-                'related'
-            ));
+        // 1. Tìm sản phẩm theo ID trong CSDL (nếu bảng products tồn tại)
+        $product = null;
+        if (Schema::hasTable('products')) {
+            $product = Product::find($id);
         }
 
-        // Trường hợp chưa nhận diện được View, trả về JSON để kiểm tra
-        return response()->json([
-            'message' => 'Dữ liệu sản phẩm khả dụng cho kiểm thử Race Condition.',
-            'product_id' => $id,
-            'availability' => $availability
+        // 2. Nếu không tìm thấy sản phẩm trong CSDL, tạo đối tượng mẫu quà lưu niệm dự phòng
+        if (!$product) {
+            $product = (object) [
+                'id'          => $id,
+                'title'       => 'Mật ong hoa nhãn Sơn La',
+                'base_price'  => 180000,
+                'capacity'    => 10, // Số lượng tồn kho
+                'location'    => 'Sơn La',
+                'description' => 'Mật ong hoa nhãn nguyên chất, quà lưu niệm đặc sản vùng núi Tây Bắc có tem QR truy xuất nguồn gốc.',
+            ];
+
+            $bookedSeats = 0;
+            $remainingSeats = $product->capacity;
+            $totalSeats = $product->capacity;
+        } else {
+            // Tính số lượng sản phẩm đã được đặt mua thành công
+            if (Schema::hasTable('bookings')) {
+                $bookedSeats = Booking::where('product_id', $product->id)
+                    ->where('status', 'confirmed')
+                    ->sum('quantity');
+            } else {
+                $bookedSeats = 0;
+            }
+
+            $remainingSeats = $product->capacity;
+            $totalSeats = $remainingSeats + $bookedSeats;
+        }
+
+        // Kiểm tra tình trạng sản phẩm còn hàng hay không
+        $availability = $remainingSeats > 0;
+
+        // Trả về JSON nếu là request API / AJAX
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'status'         => 'success',
+                'data'           => $product,
+                'availability'   => $availability,
+                'totalSeats'     => $totalSeats,
+                'bookedSeats'    => $bookedSeats,
+                'remainingSeats' => $remainingSeats
+            ]);
+        }
+
+        // 3. Trả về View giao diện chi tiết sản phẩm quà lưu niệm
+        return view('products.show', compact(
+            'product',
+            'availability',
+            'totalSeats',
+            'bookedSeats',
+            'remainingSeats'
+        ));
+    }
+
+    /**
+     * Hiển thị danh sách đơn đặt hàng sản phẩm
+     */
+    public function index()
+    {
+        $bookings = collect();
+        if (Schema::hasTable('bookings')) {
+            $bookings = Booking::with('product')->orderBy('created_at', 'desc')->get();
+        }
+        
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json(['status' => 'success', 'data' => $bookings]);
+        }
+
+        return view('bookings.index', compact('bookings'));
+    }
+
+    /**
+     * Xử lý Đặt mua sản phẩm (Khóa giao dịch đồng thời - Lock For Update)
+     */
+    public function store(Request $request)
+    {
+        // 1. Kiểm tra dữ liệu đầu vào
+        $validated = $request->validate([
+            'product_id' => 'required|integer',
+            'quantity'   => 'required|integer|min:1',
         ]);
-    }
 
-    /**
-     * Giữ chỗ / Tạo đơn đặt hàng mới
-     */
-    public function store(StoreBookingRequest $r, BookingService $bookings)
-    {
         try {
-            $booking = $bookings->hold(
-                $r->user()->id,
-                (int) $r->product_id,
-                $r->service_date,
-                (int) $r->pax
-            );
-        } catch (RuntimeException $e) {
-            Log::warning('Giu cho that bai', ['user' => $r->user()->id, 'loi' => $e->getMessage()]);
-            return back()->withInput()->withErrors(['pax' => $e->getMessage()]);
+            // 2. Bắt đầu DB Transaction để xử lý mua hàng an toàn (chống Race Condition)
+            $booking = DB::transaction(function () use ($validated, $request) {
+                
+                // Khóa dòng dữ liệu sản phẩm để tránh xung đột tồn kho khi nhiều người mua cùng lúc
+                $product = null;
+                if (Schema::hasTable('products')) {
+                    $product = Product::where('id', $validated['product_id'])
+                        ->lockForUpdate()
+                        ->first();
+                }
+
+                // Kiểm tra tồn kho sản phẩm
+                if (!$product || $product->capacity < $validated['quantity']) {
+                    throw new \Exception('Rất tiếc, sản phẩm lưu niệm này hiện đã hết hàng hoặc không đủ số lượng trong kho.');
+                }
+
+                // Trừ số lượng tồn kho sản phẩm
+                $product->capacity -= $validated['quantity'];
+                $product->save();
+
+                // Tạo đơn đặt hàng mới
+                return Booking::create([
+                    'user_id'    => $request->user()?->id ?? 1,
+                    'product_id' => $product->id,
+                    'quantity'   => $validated['quantity'],
+                    'status'     => 'confirmed',
+                    'code'       => 'SP-' . strtoupper(uniqid()),
+                ]);
+            });
+
+            // 3. Trả về Response thành công
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Đặt hàng sản phẩm thành công!',
+                    'data'    => $booking
+                ], 200);
+            }
+
+            return back()->with('success', 'Đặt hàng thành công! Mã đơn hàng: ' . $booking->code);
+
+        } catch (\Exception $e) {
+            Log::warning('Đặt hàng thất bại', ['error' => $e->getMessage()]);
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => $e->getMessage()
+                ], 400);
+            }
+
+            return back()->withInput()->withErrors(['quantity' => $e->getMessage()]);
         }
-
-        // Luu ma don vao phien de trang thanh toan doc lai
-        session(['current_booking' => $booking->code]);
-
-        return redirect()
-            ->route('payment.show', ['code' => $booking->code])
-            ->with('status', "Da giu cho den {$booking->hold_expires_at->format('H:i')}.");
     }
 
     /**
-     * Xem chi tiết đơn hàng (Ủy quyền qua BookingPolicy)
+     * Xem chi tiết 1 đơn hàng quà lưu niệm
      */
-    public function show(Booking $booking)
+    public function show($id)
     {
-        $this->authorize('view', $booking);
+        $booking = Booking::with('product')->findOrFail($id);
+
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json(['status' => 'success', 'data' => $booking]);
+        }
 
         return view('bookings.show', compact('booking'));
     }
 
     /**
-     * Hủy đơn hàng (Ủy quyền qua BookingPolicy)
+     * Hủy đơn hàng và hoàn trả số lượng vào kho sản phẩm
      */
-    public function cancel(Booking $booking)
-    {
-        $this->authorize('cancel', $booking);
-
-        $booking->update(['status' => 'cancelled']);
-
-        return back()->with('success', 'Đã hủy đơn hàng thành công!');
-    }
-
-    /**
-     * Tra cứu đơn hàng bằng Token đã mã hóa (Mục 6.6)
-     */
-    public function lookup(string $token)
+    public function cancel($id)
     {
         try {
-            // Giải mã token lấy ID đơn hàng gốc
-            $id = (int) Crypt::decryptString($token);
-        } catch (DecryptException $e) {
-            // Trả về 404 nếu token không hợp lệ hoặc bị can thiệp
-            abort(404);
+            DB::transaction(function () use ($id) {
+                $booking = Booking::findOrFail($id);
+
+                if ($booking->status === 'cancelled') {
+                    throw new \Exception('Đơn hàng đã được hủy trước đó.');
+                }
+
+                // Hoàn trả lại số lượng tồn kho cho sản phẩm
+                $product = Product::where('id', $booking->product_id)->lockForUpdate()->first();
+                if ($product) {
+                    $product->capacity += $booking->quantity;
+                    $product->save();
+                }
+
+                $booking->update(['status' => 'cancelled']);
+            });
+
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['status' => 'success', 'message' => 'Hủy đơn hàng thành công!']);
+            }
+
+            return back()->with('success', 'Đã hủy đơn hàng thành công!');
+
+        } catch (\Exception $e) {
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
+            }
+
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        $booking = Booking::findOrFail($id);
-
-        // Kiểm tra quyền truy cập chống IDOR
-        $this->authorize('view', $booking);
-
-        return view('bookings.show', compact('booking'));
-    }
-
-    /**
-     * Tải hóa đơn bảo mật qua Signed Route (Mục 6.6)
-     */
-    public function downloadInvoice(Booking $booking)
-    {
-        $this->authorize('view', $booking);
-
-        // Trả về file hóa đơn PDF tương ứng
-        return response()->download(storage_path("app/invoices/invoice-{$booking->id}.pdf"));
     }
 }

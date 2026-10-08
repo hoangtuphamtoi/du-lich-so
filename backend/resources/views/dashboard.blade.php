@@ -21,6 +21,56 @@
                 </div>
             </div>
 
+            <!-- Khối Chức năng Quản trị Nhanh -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h4 class="text-base font-semibold text-gray-900 border-b pb-3 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Lối tắt Chức năng Quản trị
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Nút Quản lý Sản phẩm -->
+                    <a href="{{ route('admin.products.index') }}" class="flex items-center p-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-xl transition-all duration-200 group shadow-sm hover:shadow">
+                        <div class="p-3 bg-indigo-600 text-white rounded-lg group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-bold text-gray-900">Quản lý Sản phẩm</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Danh sách, Nổi bật, Giảm giá</p>
+                        </div>
+                    </a>
+
+                    <!-- Nút Thêm Sản phẩm mới -->
+                    <a href="{{ route('admin.products.create') }}" class="flex items-center p-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 rounded-xl transition-all duration-200 group shadow-sm hover:shadow">
+                        <div class="p-3 bg-emerald-600 text-white rounded-lg group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-bold text-gray-900">Thêm Sản phẩm</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Tạo tour/dịch vụ du lịch mới</p>
+                        </div>
+                    </a>
+
+                    <!-- Nút Quản lý Tài khoản Người dùng -->
+                    <a href="{{ route('admin.users.index') }}" class="flex items-center p-4 bg-sky-50 hover:bg-sky-100 border border-sky-100 rounded-xl transition-all duration-200 group shadow-sm hover:shadow">
+                        <div class="p-3 bg-sky-600 text-white rounded-lg group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-bold text-gray-900">Quản lý Người dùng</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Xem & Đổi mật khẩu tài khoản</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             <!-- Khung thông tin chi tiết -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Thẻ thông tin cá nhân -->
