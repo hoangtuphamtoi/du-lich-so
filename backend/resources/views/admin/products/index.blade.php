@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Quản lý Sản phẩm / Tour') }}
             </h2>
-            <a href="{{ route('admin.products.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition">
+            <a href="{{ route('admin.products.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition shadow-sm">
                 + Thêm mới
             </a>
         </div>
@@ -15,7 +15,7 @@
 
             <!-- Thông báo thành công -->
             @if(session('success'))
-                <div class="p-4 bg-emerald-100 border border-emerald-400 text-emerald-800 rounded-xl text-sm font-medium">
+                <div class="p-4 bg-emerald-100 border border-emerald-400 text-emerald-800 rounded-xl text-sm font-medium shadow-sm">
                     {{ session('success') }}
                 </div>
             @endif
@@ -29,7 +29,7 @@
 
             <!-- Bảng danh sách sản phẩm -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
-                <div class="p-6">
+                <div class="p-6 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -37,22 +37,30 @@
                                 <th class="px-4 py-3">Tên sản phẩm</th>
                                 <th class="px-4 py-3">Giá gốc</th>
                                 <th class="px-4 py-3">Giá giảm</th>
+                                <th class="px-4 py-3 text-center">Tồn kho</th>
                                 <th class="px-4 py-3">Nổi bật</th>
                                 <th class="px-4 py-3 text-right">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
                             @forelse($products as $product)
-                                <tr>
+                                <tr class="hover:bg-gray-50/50 transition">
                                     <td class="px-4 py-3 font-semibold">{{ $product->id }}</td>
-                                    <td class="px-4 py-3 font-medium text-gray-900">{{ $product->title }}</td>
-                                    <td class="px-4 py-3">{{ number_format($product->base_price) }}đ</td>
+                                    <td class="px-4 py-3 font-medium text-gray-900">
+                                        {{ $product->title ?? $product->name }}
+                                    </td>
+                                    <td class="px-4 py-3">{{ number_format($product->base_price ?? $product->price) }}đ</td>
                                     <td class="px-4 py-3">
                                         @if($product->is_discount && $product->discount_price)
                                             <span class="text-emerald-600 font-bold">{{ number_format($product->discount_price) }}đ</span>
                                         @else
                                             <span class="text-gray-400">Không giảm</span>
                                         @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ ($product->stock ?? 0) > 0 ? 'bg-blue-50 text-blue-700' : 'bg-rose-50 text-rose-700' }}">
+                                            {{ $product->stock ?? 0 }}
+                                        </span>
                                     </td>
                                     <td class="px-4 py-3">
                                         <form action="{{ route('admin.products.toggleFeatured', $product->id) }}" method="POST">
@@ -63,7 +71,13 @@
                                             </button>
                                         </form>
                                     </td>
-                                    <td class="px-4 py-3 text-right">
+                                    <td class="px-4 py-3 text-right space-x-2">
+                                        <!-- Nút Sửa -->
+                                        <a href="{{ route('admin.products.edit', $product->id) }}" class="inline-block text-indigo-600 hover:text-indigo-800 font-semibold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition">
+                                            Sửa
+                                        </a>
+
+                                        <!-- Nút Xóa -->
                                         <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
                                             @csrf
                                             @method('DELETE')
@@ -75,7 +89,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-8 text-center text-gray-400">Chưa có sản phẩm nào trong hệ thống.</td>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">Chưa có sản phẩm nào trong hệ thống.</td>
                                 </tr>
                             @endforelse
                         </tbody>

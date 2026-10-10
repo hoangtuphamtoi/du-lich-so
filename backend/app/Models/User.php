@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,11 +11,19 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * Chỉ định cột mật khẩu tùy chỉnh cho Laravel Authentication
+     * Chỉ định tên cột mật khẩu tùy chỉnh cho Laravel Auth
      */
     public function getAuthPasswordName()
     {
         return 'password_hash';
+    }
+
+    /**
+     * Trả về giá trị mật khẩu đã băm của User
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
     }
 
     /**
@@ -26,7 +33,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password_hash',
-        'role', // <-- Đã thêm cột role
+        'role',
     ];
 
     /**
@@ -39,8 +46,6 @@ class User extends Authenticatable
 
     /**
      * Ép kiểu dữ liệu
-     *
-     * @return array<string, string>
      */
     protected function casts(): array
     {

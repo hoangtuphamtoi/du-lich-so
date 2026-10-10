@@ -8,18 +8,49 @@ use Illuminate\Database\Eloquent\Builder;
 class Product extends Model
 {
     protected $fillable = [
-        'supplier_id', 'category_id', 'title', 'slug',
-        'type', 'base_price', 'duration_days', 'capacity', 'cancel_policy', 'status',
-        'is_featured', 'is_discount', 'discount_price' // <- Đã thêm các trường nổi bật & giảm giá
+        'supplier_id', 
+        'category_id', 
+        'name',           // <- Bổ sung tên sản phẩm
+        'title', 
+        'slug',
+        'type', 
+        'price',          // <- Bổ sung cột price
+        'base_price', 
+        'stock',          // <- QUAN TRỌNG: Đã thêm cột tồn kho
+        'duration_days', 
+        'capacity', 
+        'cancel_policy', 
+        'status',
+        'is_featured', 
+        'is_discount', 
+        'discount_price',
+        'origin',         // <- Bổ sung xuất xứ/nguồn gốc
+        'location',       // <- Vị trí
+        'image',          // <- Đường dẫn ảnh sản phẩm
+        'description',    // <- Bổ sung mô tả chi tiết
     ];
 
     protected $casts = [
-        'base_price' => 'decimal:2',
-        'discount_price' => 'decimal:2', // <- Thêm ép kiểu cho giá giảm
-        'duration_days' => 'integer',
-        'is_featured' => 'boolean',      // <- Thêm ép kiểu boolean
-        'is_discount' => 'boolean',      // <- Thêm ép kiểu boolean
+        'price'          => 'decimal:2',
+        'base_price'     => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'stock'          => 'integer',
+        'duration_days'  => 'integer',
+        'is_featured'    => 'boolean',
+        'is_discount'    => 'boolean',
     ];
+
+    // Accessor: Tự động dùng 'title' nếu 'name' bị trống hoặc ngược lại
+    public function getNameAttribute($value)
+    {
+        return $value ?? $this->attributes['title'] ?? 'Sản phẩm chưa đặt tên';
+    }
+
+    // Accessor: Tự động dùng 'base_price' nếu 'price' bị trống
+    public function getPriceAttribute($value)
+    {
+        return $value ?? $this->attributes['base_price'] ?? 0;
+    }
 
     // --- Các quan hệ Eloquent (Relationships) ---
     public function supplier() 
@@ -56,7 +87,7 @@ class Product extends Model
     public function scopeFilter(Builder $q, array $f): Builder
     {
         return $q->where('status', 'published')
-            ->when($f['keyword'] ?? null, fn ($q, $v) => $q->where('title', 'like', "%{$v}%"))
+            ->when($f['keyword'] ?? null, fn ($q, $v) => $q->where('title', 'like', "%{$v}%")->orWhere('name', 'like', "%{$v}%"))
             ->when($f['type'] ?? null, fn ($q, $v) => $q->where('type', $v))
             ->when($f['price_min'] ?? null, fn ($q, $v) => $q->where('base_price', '>=', $v))
             ->when($f['price_max'] ?? null, fn ($q, $v) => $q->where('base_price', '<=', $v))

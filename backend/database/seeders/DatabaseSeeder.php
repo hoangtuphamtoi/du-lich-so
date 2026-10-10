@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,10 +12,11 @@ class DatabaseSeeder extends Seeder
     {
         // Tạo tài khoản Admin
         User::firstOrCreate(
-            ['email' => 'admin@dulichso.com'],
+            ['email' => '24108702@st.phenikaa-uni.edu.vn'],
             [
-                'name' => 'Admin User',
-                'password' => 'password123', // Truyền chuỗi thường, Laravel 11 sẽ tự băm mật khẩu
+                'name'          => 'Admin User',
+                'password_hash' => Hash::make('12345678'),
+                'role'          => 'admin',
             ]
         );
 
@@ -22,8 +24,9 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'customer@dulichso.com'],
             [
-                'name' => 'Customer User',
-                'password' => 'password123',
+                'name'          => 'Customer User',
+                'password_hash' => Hash::make('12345678'),
+                'role'          => 'user',
             ]
         );
     }

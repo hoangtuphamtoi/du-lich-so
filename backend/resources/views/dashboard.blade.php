@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Bảng điều khiển Quản trị') }}
+            {{ Auth::user()?->role === 'admin' ? __('Bảng điều khiển Quản trị') : __('Bảng điều khiển Cá nhân') }}
         </h2>
     </x-slot>
 
@@ -16,12 +16,13 @@
                         <p class="mt-1 text-sm text-gray-600">Chào mừng bạn quay trở lại với Hệ thống Quản lý Du Lịch Số (CSE703073).</p>
                     </div>
                     <span class="px-3 py-1 text-xs font-bold text-indigo-700 bg-indigo-100 rounded-full uppercase tracking-wider">
-                        {{ Auth::user()->role ?? 'admin' }}
+                        {{ Auth::user()->role ?? 'customer' }}
                     </span>
                 </div>
             </div>
 
-            <!-- Khối Chức năng Quản trị Nhanh -->
+            <!-- Khối Chức năng Quản trị Nhanh (Chỉ hiển thị cho tài khoản Admin) -->
+            @if(Auth::user()?->role === 'admin')
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h4 class="text-base font-semibold text-gray-900 border-b pb-3 mb-4 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,6 +71,7 @@
                     </a>
                 </div>
             </div>
+            @endif
 
             <!-- Khung thông tin chi tiết -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -87,8 +89,8 @@
                         <div>
                             <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vai trò</span>
                             <div class="mt-1">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800">
-                                    {{ Auth::user()->role ?? 'admin' }}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold {{ Auth::user()?->role === 'admin' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800' }}">
+                                    {{ Auth::user()->role ?? 'customer' }}
                                 </span>
                             </div>
                         </div>

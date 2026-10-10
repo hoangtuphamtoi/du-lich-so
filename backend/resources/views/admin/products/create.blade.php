@@ -1,90 +1,154 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Thêm Sản phẩm / Tour mới') }}
-            </h2>
-            <a href="{{ route('admin.products.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition">
-                ← Quay lại
-            </a>
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thêm sản phẩm mới - Quản trị</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; background: #F8FAFC; color: #1E293B; margin: 0; padding: 24px; }
+        .form-container { max-width: 680px; margin: 0 auto; background: #FFFFFF; border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: #0B3B2C; }
+        .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 14px; outline: none; transition: all 0.2s; box-sizing: border-box; }
+        .form-control:focus { border-color: #0B3B2C; box-shadow: 0 0 0 3px rgba(11, 59, 44, 0.1); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #0B3B2C; cursor: pointer; user-select: none; }
+        .checkbox-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0B3B2C; cursor: pointer; }
+        .btn-submit { background: #0B3B2C; color: #FFFFFF; font-weight: 700; border: none; padding: 14px 24px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 15px; margin-top: 10px; }
+        .btn-submit:hover { background: #14532D; }
+        .btn-back { display: inline-block; margin-bottom: 20px; color: #64748B; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .image-preview { margin-top: 10px; max-width: 180px; max-height: 140px; border-radius: 8px; display: none; border: 1px solid #CBD5E1; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <a href="{{ route('admin.dashboard') }}" class="btn-back">← Quay lại trang quản trị</a>
+    <h2 style="font-size: 24px; font-weight: 800; color: #0B3B2C; margin-bottom: 24px;">Thêm sản phẩm mới</h2>
+
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+
+        <!-- 1. TÊN SẢN PHẨM -->
+        <div class="form-group">
+            <label class="form-label" for="title">Tên sản phẩm <span style="color: red;">*</span></label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Nhập tên sản phẩm..." value="{{ old('title') }}" required>
+            @error('title')
+                <span style="color: red; font-size: 12px;">{{ $message }}</span>
+            @enderror
         </div>
-    </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 p-6">
-                
-                <form action="{{ route('admin.products.store') }}" method="POST" class="space-y-6">
-                    @csrf
+        <!-- 2. DANH MỤC SẢN PHẨM -->
+        <div class="form-group">
+            <label class="form-label" for="category_id">Danh mục sản phẩm</label>
+            <select id="category_id" name="category_id" class="form-control">
+                <option value="">-- Chọn danh mục --</option>
+                @if(isset($categories) && count($categories) > 0)
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
 
-                    <!-- Tên sản phẩm -->
-                    <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700">Tên sản phẩm / Tour <span class="text-rose-500">*</span></label>
-                        <input type="text" name="title" id="title" value="{{ old('title') }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                        @error('title')
-                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+        <!-- 3. TẢI ẢNH SẢN PHẨM -->
+        <div class="form-group">
+            <label class="form-label" for="image">Ảnh sản phẩm</label>
+            <input type="file" id="image" name="image" class="form-control" accept="image/*" onchange="previewImage(event)">
+            <img id="preview" class="image-preview" alt="Xem trước ảnh">
+            @error('image')
+                <span style="color: red; font-size: 12px;">{{ $message }}</span>
+            @enderror
+        </div>
 
-                    <!-- Danh mục -->
-                    <div>
-                        <label for="category_id" class="block text-sm font-medium text-gray-700">Danh mục</label>
-                        <select name="category_id" id="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                            <option value="">-- Chọn danh mục --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('category_id')
-                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+        <!-- 4. GIÁ CẢ & GIẢM GIÁ (%) -->
+        <div class="grid-2">
+            <div class="form-group">
+                <label class="form-label" for="base_price">Giá gốc (VNĐ) <span style="color: red;">*</span></label>
+                <input type="number" id="base_price" name="base_price" class="form-control" placeholder="Ví dụ: 150000" value="{{ old('base_price') }}" min="0" required>
+                @error('base_price')
+                    <span style="color: red; font-size: 12px;">{{ $message }}</span>
+                @enderror
+            </div>
 
-                    <!-- Giá gốc & Giá giảm -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="base_price" class="block text-sm font-medium text-gray-700">Giá gốc (VNĐ) <span class="text-rose-500">*</span></label>
-                            <input type="number" name="base_price" id="base_price" value="{{ old('base_price') }}" min="0" step="1000" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                            @error('base_price')
-                                <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="discount_price" class="block text-sm font-medium text-gray-700">Giá khuyến mãi (VNĐ)</label>
-                            <input type="number" name="discount_price" id="discount_price" value="{{ old('discount_price') }}" min="0" step="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" placeholder="Bỏ trống nếu không giảm giá">
-                            @error('discount_price')
-                                <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Sức chứa / Số lượng chỗ -->
-                    <div>
-                        <label for="capacity" class="block text-sm font-medium text-gray-700">Sức chứa / Số chỗ</label>
-                        <input type="number" name="capacity" id="capacity" value="{{ old('capacity', 0) }}" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                        @error('capacity')
-                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Nổi bật -->
-                    <div class="flex items-center">
-                        <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4 w-4">
-                        <label for="is_featured" class="ml-2 text-sm text-gray-700 font-medium">Đánh dấu là Sản phẩm / Tour Nổi Bật</label>
-                    </div>
-
-                    <!-- Nút lưu -->
-                    <div class="pt-4 flex justify-end">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg text-sm transition">
-                            Lưu sản phẩm
-                        </button>
-                    </div>
-                </form>
-
+            <div class="form-group">
+                <label class="form-label" for="discount_percent">Giảm giá (%)</label>
+                <input type="number" id="discount_percent" name="discount_percent" class="form-control" placeholder="Nhập % (Ví dụ: 10, 20...)" value="{{ old('discount_percent') }}" min="0" max="99">
+                <small id="calc_preview" style="display: block; font-size: 12px; color: #16a34a; font-weight: 600; margin-top: 6px;"></small>
+                @error('discount_percent')
+                    <span style="color: red; font-size: 12px;">{{ $message }}</span>
+                @enderror
             </div>
         </div>
-    </div>
-</x-app-layout>
+
+        <!-- 5. XUẤT XỨ & SỨC CHỨA/DUNG TÍCH -->
+        <div class="grid-2">
+            <div class="form-group">
+                <label class="form-label" for="location">Xuất xứ / Địa phương</label>
+                <input type="text" id="location" name="location" class="form-control" placeholder="Ví dụ: Thái Nguyên, Bến Tre..." value="{{ old('location') }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="capacity">Sức chứa / Số chỗ / Số lượng</label>
+                <input type="number" id="capacity" name="capacity" class="form-control" placeholder="Ví dụ: 10" value="{{ old('capacity') }}" min="0">
+            </div>
+        </div>
+
+        <!-- 6. CẤU HÌNH SẢN PHẨM NỔI BẬT -->
+        <div class="form-group" style="background: #F1F5F9; padding: 14px 16px; border-radius: 10px; margin-bottom: 24px;">
+            <label class="checkbox-label">
+                <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', true) ? 'checked' : '' }}>
+                <span>Đặt làm sản phẩm Nổi Bật (Hiển thị ở trang chủ)</span>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-submit">Lưu sản phẩm</button>
+    </form>
+</div>
+
+<script>
+    // Hàm hiển thị xem trước ảnh khi chọn file
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Tự động tính thử số tiền sau khi giảm giá real-time
+    const basePriceInput = document.getElementById('base_price');
+    const discountPercentInput = document.getElementById('discount_percent');
+    const calcPreview = document.getElementById('calc_preview');
+
+    function updatePreviewPrice() {
+        const basePrice = parseFloat(basePriceInput.value) || 0;
+        const percent = parseFloat(discountPercentInput.value) || 0;
+
+        if (basePrice > 0 && percent > 0 && percent < 100) {
+            const finalPrice = basePrice * (100 - percent) / 100;
+            calcPreview.textContent = `➔ Giá sau giảm (${percent}%): ` + finalPrice.toLocaleString('vi-VN') + ' VNĐ';
+        } else {
+            calcPreview.textContent = '';
+        }
+    }
+
+    if (basePriceInput && discountPercentInput) {
+        basePriceInput.addEventListener('input', updatePreviewPrice);
+        discountPercentInput.addEventListener('input', updatePreviewPrice);
+    }
+</script>
+
+</body>
+</html>
