@@ -11,17 +11,17 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Tailwind CSS CDN -->
+        <!-- Tailwind CSS CDN (Đảm bảo luôn tải giao diện ổn định) -->
         <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Cấu hình Tailwind nhận diện Dark Mode thông qua class 'dark' -->
+        <!-- Cấu hình Tailwind nhận diện Dark Mode -->
         <script>
             tailwind.config = {
                 darkMode: 'class',
             }
         </script>
 
-        <!-- CSS BẮT BUỘC: Khống chế kích thước SVG và Logo, chống vỡ tràn màn hình -->
+        <!-- CSS khống chế kích thước SVG & Logo chống phình to -->
         <style>
             svg {
                 max-width: 100%;
@@ -33,7 +33,7 @@
             }
         </style>
 
-        <!-- SCRIPT XỬ LÝ LƯU TRẠNG THÁI DARK MODE -->
+        <!-- Script Dark Mode -->
         <script>
             if (localStorage.getItem('theme') === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -67,7 +67,7 @@
             </main>
         </div>
 
-        <!-- Hàm xử lý sự kiện khi bấm nút Bật/Tắt giao diện tối -->
+        <!-- Hàm Toggle Dark Mode -->
         <script>
             function toggleDarkMode() {
                 document.documentElement.classList.toggle('dark');
