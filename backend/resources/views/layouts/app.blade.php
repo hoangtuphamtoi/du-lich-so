@@ -12,16 +12,15 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Tailwind CSS CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-            }
-        </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+    }
+</script>
 
-        <!-- CSS KHỐNG CHẾ CỨNG KÍCH THƯỚC SVG (CHỐNG VỠ GIAO DIỆN TOÀN MẠNG) -->
-        <style>
-    /* Ép tất cả SVG không bao giờ được vượt quá 48px nếu mất Tailwind CSS */
+<!-- CSS KHỐNG CHẾ CỨNG KÍCH THƯỚC SVG CHỐNG VỠ TRÀN MÀN HÌNH -->
+<style>
     svg {
         display: inline-block !important;
         vertical-align: middle !important;
@@ -30,14 +29,11 @@
         width: auto;
         height: auto;
     }
-    
-    /* Gán kích thước chuẩn khi nhận được class Tailwind */
     svg.w-4, .w-4 > svg { width: 1rem !important; height: 1rem !important; max-width: 1rem !important; }
     svg.w-5, .w-5 > svg { width: 1.25rem !important; height: 1.25rem !important; max-width: 1.25rem !important; }
     svg.w-6, .w-6 > svg { width: 1.5rem !important; height: 1.5rem !important; max-width: 1.5rem !important; }
     svg.w-8, .w-8 > svg { width: 2rem !important; height: 2rem !important; max-width: 2rem !important; }
     svg.w-12, .w-12 > svg { width: 3rem !important; height: 3rem !important; max-width: 3rem !important; }
-    svg.w-20, .w-20 > svg { width: 5rem !important; height: 5rem !important; max-width: 5rem !important; }
 </style>
 
         <!-- SCRIPT XỬ LÝ DARK MODE -->
