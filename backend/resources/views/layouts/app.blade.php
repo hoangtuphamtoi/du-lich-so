@@ -13,13 +13,8 @@
 
         <!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-    }
-</script>
 
-<!-- CSS KHỐNG CHẾ CỨNG KÍCH THƯỚC SVG CHỐNG VỠ TRÀN MÀN HÌNH -->
+<!-- CSS KHỐNG CHẾ CỨNG KÍCH THƯỚC SVG -->
 <style>
     svg {
         display: inline-block !important;
