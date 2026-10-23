@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Quản trị') }}</title>
+        <title>{{ config('app.name', 'Đặc sản Việt') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -21,7 +21,19 @@
             }
         </script>
 
-        <!-- SCRIPT XỬ LÝ LƯU TRẠNG THÁI DARK MODE (Chạy ngay khi tải trang) -->
+        <!-- CSS BẮT BUỘC: Khống chế kích thước SVG và Logo, chống vỡ tràn màn hình -->
+        <style>
+            svg {
+                max-width: 100%;
+            }
+            header svg, nav svg, a svg, .logo svg {
+                max-height: 48px !important;
+                width: auto !important;
+                object-fit: contain !important;
+            }
+        </style>
+
+        <!-- SCRIPT XỬ LÝ LƯU TRẠNG THÁI DARK MODE -->
         <script>
             if (localStorage.getItem('theme') === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -33,7 +45,7 @@
         <!-- Alpine.js CDN -->
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-        <!-- Scripts -->
+        <!-- Scripts & Styles qua Vite -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-200">
