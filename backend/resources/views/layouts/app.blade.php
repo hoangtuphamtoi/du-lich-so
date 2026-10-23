@@ -21,27 +21,24 @@
 
         <!-- CSS KHỐNG CHẾ CỨNG KÍCH THƯỚC SVG (CHỐNG VỠ GIAO DIỆN TOÀN MẠNG) -->
         <style>
-            /* Mặc định khóa tất cả SVG không bao giờ được lớn hơn 48px */
-            svg {
-                display: inline-block !important;
-                vertical-align: middle !important;
-                max-width: 48px !important;
-                max-height: 48px !important;
-                width: auto;
-                height: auto;
-            }
-            
-            /* Gán kích thước chuẩn theo class Tailwind khi có class */
-            svg.w-4, .w-4 > svg { width: 1rem !important; height: 1rem !important; max-width: 1rem !important; max-height: 1rem !important; }
-            svg.w-5, .w-5 > svg { width: 1.25rem !important; height: 1.25rem !important; max-width: 1.25rem !important; max-height: 1.25rem !important; }
-            svg.w-6, .w-6 > svg { width: 1.5rem !important; height: 1.5rem !important; max-width: 1.5rem !important; max-height: 1.5rem !important; }
-            svg.w-7, .w-7 > svg { width: 1.75rem !important; height: 1.75rem !important; max-width: 1.75rem !important; max-height: 1.75rem !important; }
-            svg.w-8, .w-8 > svg { width: 2rem !important; height: 2rem !important; max-width: 2rem !important; max-height: 2rem !important; }
-            svg.w-10, .w-10 > svg { width: 2.5rem !important; height: 2.5rem !important; max-width: 2.5rem !important; max-height: 2.5rem !important; }
-            svg.w-12, .w-12 > svg { width: 3rem !important; height: 3rem !important; max-width: 3rem !important; max-height: 3rem !important; }
-            svg.w-16, .w-16 > svg { width: 4rem !important; height: 4rem !important; max-width: 4rem !important; max-height: 4rem !important; }
-            svg.w-20, .w-20 > svg { width: 5rem !important; height: 5rem !important; max-width: 5rem !important; max-height: 5rem !important; }
-        </style>
+    /* Ép tất cả SVG không bao giờ được vượt quá 48px nếu mất Tailwind CSS */
+    svg {
+        display: inline-block !important;
+        vertical-align: middle !important;
+        max-width: 48px !important;
+        max-height: 48px !important;
+        width: auto;
+        height: auto;
+    }
+    
+    /* Gán kích thước chuẩn khi nhận được class Tailwind */
+    svg.w-4, .w-4 > svg { width: 1rem !important; height: 1rem !important; max-width: 1rem !important; }
+    svg.w-5, .w-5 > svg { width: 1.25rem !important; height: 1.25rem !important; max-width: 1.25rem !important; }
+    svg.w-6, .w-6 > svg { width: 1.5rem !important; height: 1.5rem !important; max-width: 1.5rem !important; }
+    svg.w-8, .w-8 > svg { width: 2rem !important; height: 2rem !important; max-width: 2rem !important; }
+    svg.w-12, .w-12 > svg { width: 3rem !important; height: 3rem !important; max-width: 3rem !important; }
+    svg.w-20, .w-20 > svg { width: 5rem !important; height: 5rem !important; max-width: 5rem !important; }
+</style>
 
         <!-- SCRIPT XỬ LÝ DARK MODE -->
         <script>
