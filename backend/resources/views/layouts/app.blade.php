@@ -5,35 +5,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Đặc sản Việt') }}</title>
+        <title>{{ config('app.name', 'Quản trị') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Tailwind CSS CDN (Đảm bảo luôn tải giao diện ổn định) -->
+        <!-- Tailwind CSS CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
-
-        <!-- Cấu hình Tailwind nhận diện Dark Mode -->
         <script>
             tailwind.config = {
                 darkMode: 'class',
             }
         </script>
 
-        <!-- CSS khống chế kích thước SVG & Logo chống phình to -->
+        <!-- KHỐNG CHẾ KÍCH THƯỚC SVG TRONG HEAD NÂNG CAO -->
         <style>
             svg {
-                max-width: 100%;
+                max-width: 100% !important;
             }
-            header svg, nav svg, a svg, .logo svg {
+            nav svg, header svg, a svg, .logo svg, svg[viewBox="0 0 316 316"] {
+                max-width: 48px !important;
                 max-height: 48px !important;
-                width: auto !important;
+                width: 48px !important;
+                height: 48px !important;
                 object-fit: contain !important;
             }
         </style>
 
-        <!-- Script Dark Mode -->
+        <!-- SCRIPT XỬ LÝ DARK MODE -->
         <script>
             if (localStorage.getItem('theme') === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -67,11 +67,9 @@
             </main>
         </div>
 
-        <!-- Hàm Toggle Dark Mode -->
         <script>
             function toggleDarkMode() {
                 document.documentElement.classList.toggle('dark');
-
                 if (document.documentElement.classList.contains('dark')) {
                     localStorage.setItem('theme', 'dark');
                 } else {
