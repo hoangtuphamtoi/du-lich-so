@@ -1,9 +1,25 @@
+<!-- TẢI TAILWIND CDN & CSS CHỐNG PHÌNH SVG DỰ PHÒNG -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    svg {
+        max-width: 100% !important;
+    }
+    header svg, nav svg, .logo svg, a svg, svg[viewBox="0 0 316 316"] {
+        max-width: 48px !important;
+        max-height: 48px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+        display: inline-block !important;
+    }
+</style>
+
 <x-app-layout>
     <x-slot name="header">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <a href="javascript:history.back()" class="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <a href="javascript:history.back()" class="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 transition flex items-center justify-center">
+                    <svg class="w-5 h-5" style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </a>
                 <div>
                     <h2 class="font-extrabold text-2xl text-gray-900 tracking-tight">
@@ -13,7 +29,7 @@
                 </div>
             </div>
             <div class="hidden sm:flex items-center gap-2 text-xs font-medium px-3.5 py-1.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 shadow-sm">
-                <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.172 2a1 1 0 011.414 0L10 10.586l3.414-3.586a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                <svg class="w-4 h-4 text-emerald-600" style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.172 2a1 1 0 011.414 0L10 10.586l3.414-3.586a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                 Bảo mật mã hóa 256-bit
             </div>
         </div>
@@ -30,7 +46,7 @@
 
             @if(session('error'))
                 <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-sm font-medium shadow-sm flex items-center gap-3">
-                    <svg class="w-5 h-5 text-rose-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                    <svg class="w-5 h-5 text-rose-500 flex-shrink-0" style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
@@ -45,7 +61,7 @@
                     <input type="hidden" name="from_cart" value="1">
                 @endif
 
-                <!-- CỘT TRÁI: THÔNG TIN GIAO HÀNG & THANH TOÁN (7 CỘT) -->
+                <!-- CỘT TRÁI: THÔNG TIN GIAO HÀNG & THANH TOÁN -->
                 <div class="lg:col-span-7 space-y-6">
 
                     <!-- Box 1: Thông tin liên hệ -->
@@ -122,7 +138,7 @@
 
                 </div>
 
-                <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG (5 CỘT) -->
+                <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG -->
                 <div class="lg:col-span-5 space-y-6">
                     <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/80 shadow-sm sticky top-6">
                         <h3 class="text-lg font-extrabold text-gray-900 pb-4 border-b border-gray-100 flex items-center justify-between">
@@ -182,12 +198,12 @@
                         <!-- Nút đặt hàng -->
                         <button type="submit" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-extrabold text-base rounded-xl transition duration-200 shadow-xl shadow-indigo-200 flex items-center justify-center gap-2 transform active:scale-[0.99]">
                             <span>ĐẶT HÀNG NGAY</span>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            <svg class="w-5 h-5" style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </button>
 
                         <!-- Cam kết -->
                         <div class="mt-5 p-3.5 bg-emerald-50/80 rounded-xl border border-emerald-100 flex items-center gap-3 text-xs text-emerald-800">
-                            <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                             <span>Cam kết sản phẩm tươi sạch, đổi trả 100% nếu có lỗi từ nhà vườn.</span>
                         </div>
 
