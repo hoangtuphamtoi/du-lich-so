@@ -1,23 +1,62 @@
-# Bước 1: build CSS/JS bằng Node 22
+```dockerfile
+# ==========================================
+# Stage 1: Build frontend
+# ==========================================
 FROM node:22-slim AS assets
-WORKDIR /app
-COPY package*.json ./
+
+WORKDIR /frontend
+
+COPY frontend/package*.json ./
 RUN npm ci
-COPY . .
+
+COPY frontend/ ./
 RUN npm run build
 
-# Bước 2: chạy Laravel bằng PHP
+
+# ==========================================
+# Stage 2: Run Laravel backend
+# ==========================================
 FROM php:8.3-cli
+
 RUN apt-get update && apt-get install -y \
-    git unzip curl libzip-dev libpng-dev libonig-dev libxml2-dev libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring zip gd bcmath
+    git \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libsqlite3-dev \
+    && docker-php-ext-install \
+       pdo \
+       pdo_mysql \
+       pdo_sqlite \
+       mbstring \
+       zip \
+       gd \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
-COPY . .
-COPY --from=assets /app/public/build ./public/build
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+COPY backend/ ./
 
-CMD touch /app/database/database.sqlite && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction
+
+COPY --from=assets /frontend/dist ./public/build
+
+RUN mkdir -p storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    database \
+    && touch database/database.sqlite \
+    && chmod -R 775 storage bootstrap/cache
+
+EXPOSE 10000
+
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
+```
