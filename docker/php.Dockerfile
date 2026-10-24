@@ -22,8 +22,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory inside container
 WORKDIR /var/www/html
 
-# Copy specifically the contents of the backend folder from root into the container
-COPY backend/ .
+# Copy toàn bộ repository gốc vào container để kiểm soát cấu trúc
+COPY . .
+
+# Di chuyển thẳng vào thư mục backend (nơi chứa file artisan)
+WORKDIR /var/www/html/backend
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
